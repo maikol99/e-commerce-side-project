@@ -2,6 +2,7 @@
 
 import { Button } from "@/components/ui/button"; // Importa el componente de botón personalizado
 import {
+  ArrowRight,
   BookOpen,
   Camera,
   CreditCard,
@@ -17,6 +18,7 @@ import Image from "next/image"; // Componente optimizado de imágenes de Next.js
 import { useEffect, useState } from "react"; // Hooks de React
 import Link from "next/link"; // Para navegación interna sin recargar página
 import NewBooks from "./components/NewBooks"; // Componente que muestra los libros nuevos
+import { Card, CardContent } from "@/components/ui/card";
 
 export default function Home() {
   // 🖼️ Imágenes del banner principal
@@ -30,7 +32,7 @@ export default function Home() {
   const blogPosts = [
     {
       imageSrc:
-        "https://images.unsplash.com/photo-1604866830893-c13cafa515d5?w=800&auto=format&fit=crop&q=60",
+        "https://images.unsplash.com/photo-1604866830893-c13cafa515d5?w=800&auto=format&fit=crop&q=60&ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxzZWFyY2h8NHx8b25saW5lJTIwc2VsbCUyMGJvb2tzfGVufDB8fDB8fHww",
       title: "Where and how to sell old books online?",
       description:
         "Get started with selling your used books online and earn money from your old books.",
@@ -38,7 +40,7 @@ export default function Home() {
     },
     {
       imageSrc:
-        "https://media.istockphoto.com/id/910384920/photo/kid-reading-near-locked-door.webp",
+        "https://media.istockphoto.com/id/910384920/photo/kid-reading-near-locked-door.webp?a=1&b=1&s=612x612&w=0&k=20&c=J3FL4ZVORItw_bkLzlVo4WO-xUy22S7Qqbuq2xusNnc=",
       title: "What to do with old books?",
       description:
         "Learn about different ways to make use of your old books and get value from them.",
@@ -46,7 +48,7 @@ export default function Home() {
     },
     {
       imageSrc:
-        "https://images.unsplash.com/photo-1492539438225-2666b2a98f93?w=800&auto=format&fit=crop&q=60",
+        "https://images.unsplash.com/photo-1492539438225-2666b2a98f93?w=800&auto=format&fit=crop&q=60&ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxzZWFyY2h8MTR8fG9sZCUyMCUyMGJvb2tzfGVufDB8fDB8fHww",
       title: "What is BookKart?",
       description:
         "Discover how BookKart helps you buy and sell used books online easily.",
@@ -277,21 +279,42 @@ export default function Home() {
           </div>
         </div>
       </section>
+      <section className="py-16 bg-[rgb(221,234,254)]">
+        <div className="container mx-auto px-4">
+          <h2 className="text-center mb-8 text-xl font-semibold">
+            Read from our <span className="text-primary">Blog</span>
+          </h2>
 
-    {/* blog post */}
+          <div className="grid md:grid-cols-3 gap-8">
+            {blogPosts.map((post, index) => (
+              <Card
+                key={index}
+                className="flex flex-col overflow-hidden transition-all duration-300 hover:shadow-lg bg-white"
+              >
+                {/* 🔹 Imagen superior sin bordes */}
+                <div className="relative w-full h-64">
+                  <Image
+                    src={post.imageSrc}
+                    alt={post.title}
+                    fill
+                    className="object-cover w-full h-full"
+                  />
+                </div>
 
-    <section className="py-16 bg-[rgb(221,234,254)]">
-      <div className="container mx-auto px-4">
-        <h2>Read from our <span className="text-primary">Blog</span></h2>
-      </div>
-      <div className="grid md:grid-cols-3 gap-8">
-        {blogPosts.map((post,index) => (
-          <div className="" key={index}>
-
+                {/* 🔹 Contenido del card */}
+                <CardContent className="flex-1 flex flex-col items-center text-center p-6">
+                  <div className="mb-2">{post.icon}</div>
+                  <h3 className="font-semibold mb-2">{post.title}</h3>
+                  <p className="text-sm text-gray-600 flex-grow">{post.description}</p>
+                  <Button variant='link'className="mt-4 p-0 flex items-center text-primary">
+                    Read more <ArrowRight className="w-4 h-4"/>
+                  </Button>
+                </CardContent>
+              </Card>
+            ))}
           </div>
-        ))}
-      </div>
-    </section>
+        </div>
+      </section>
     </main>
   );
 }
