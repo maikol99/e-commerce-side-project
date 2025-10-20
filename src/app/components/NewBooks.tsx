@@ -5,6 +5,7 @@ import Link from "next/link";
 import Image from "next/image";
 import { Button } from "@/components/ui/button";
 import { ChevronLeft, ChevronRight } from "lucide-react";
+import { dot } from "node:test/reporters";
 
 const NewBooks = () => {
   const [currentBookSlide, setCurrentBookSlide] = useState(0);
@@ -43,13 +44,14 @@ const NewBooks = () => {
               <div className="overflow-hidden">
                 <div
                   className="flex transition-transform duration-500 ease-in-out"
-                  style={{ transform: `translateX(-${currentBookSlide * 100}%)` }}
+                  style={{
+                    transform: `translateX(-${currentBookSlide * 100}%)`,
+                  }}
                 >
                   {[0, 1, 2].map((slideIndex) => (
                     <div key={slideIndex} className="flex-none w-full">
                       <div className="grid grid-cols-1 md:grid-cols-3 gap-8 ">
-                        {books
-                          .slice(slideIndex * 3, slideIndex * 3 + 3)
+                        {books.slice(slideIndex * 3, slideIndex * 3 + 3)
                           .map((book) => (
                             <Card key={book._id} className="relative">
                               <CardContent className="p-4">
@@ -80,14 +82,17 @@ const NewBooks = () => {
                                   </h3>
                                   <div className="flex items-center justify-between">
                                     <div className="flex items-baseline gap-2">
-                                      <span className="text-lg font-bold">${book.finalPrice}</span>
+                                      <span className="text-lg font-bold">
+                                        ${book.finalPrice}
+                                      </span>
                                       {book.price && (
-                                        <span className="text-sm text-muted-foreground line-through">${book.price}</span>
+                                        <span className="text-sm text-muted-foreground line-through">
+                                          ${book.price}
+                                        </span>
                                       )}
                                     </div>
                                     <div className="flex justify-between items-center text-xs text-zinc-400">
                                       <span>{book.condition}</span>
-
                                     </div>
                                   </div>
                                   <div className="pt-4">
@@ -105,18 +110,37 @@ const NewBooks = () => {
                 </div>
               </div>
               {/*scroll button*/}
-              <button className="absolute left-0 top-1/2 -translate-y-1/2 bg-white p-2 rounded-full shadow-md"
-              onClick={prevSlide}>
-              <ChevronLeft className="h-6 w-6"/>
+              <button
+                className="absolute left-0 top-1/2 -translate-y-1/2 bg-white p-2 rounded-full shadow-md"
+                onClick={prevSlide}
+              >
+                <ChevronLeft className="h-6 w-6" />
               </button>
 
-              <button className="absolute right-0 top-1/2 -translate-y-1/2 bg-white p-2 rounded-full shadow-md"
-              onClick={NextSlide}>
-              <ChevronRight className="h-6 w-6"/>
+              <button
+                className="absolute right-0 top-1/2 -translate-y-1/2 bg-white p-2 rounded-full shadow-md"
+                onClick={NextSlide}
+              >
+                <ChevronRight className="h-6 w-6" />
               </button>
+
+              {/*dot animation*/}
+
+              <div className="mt-8 flex justify-center space-x-2">
+                {[0,1,2].map((dot) =>(
+                  <button 
+                  key={dot}
+                  onClick={() =>setCurrentBookSlide(dot)}
+                  className={`h-3 w-3 rounded-full ${currentBookSlide === dot ? 'bg-blue-600' : "bg-gray-300"}`} 
+                  >
+
+                  </button>
+                ))}
+              </div>
+
             </>
           ) : (
-            <></>
+            <p className="text-center text-gray-500"> No books to display</p>
           )}
         </div>
       </div>
