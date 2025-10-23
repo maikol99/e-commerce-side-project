@@ -281,7 +281,7 @@ export default function Home() {
       </section>
       <section className="py-16 bg-[rgb(221,234,254)]">
         <div className="container mx-auto px-4">
-          <h2 className="text-center mb-8 text-xl font-semibold">
+          <h2 className="text-3xl font-bold mb-12 text-center">
             Read from our <span className="text-primary">Blog</span>
           </h2>
 

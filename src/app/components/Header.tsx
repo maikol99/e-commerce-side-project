@@ -202,7 +202,6 @@ const Header = () => {
               type="text"
               placeholder="Book Name / Author / Subject / Publisher"
               className="w-full pr-10"
-              value=""
             />
             <Button
               size="icon"
@@ -300,7 +299,6 @@ const Header = () => {
               type="text"
               placeholder="Search books..."
               className="w-full pr-10"
-              value=""
             />
             <Button
               size="icon"
