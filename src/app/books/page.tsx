@@ -22,6 +22,12 @@ import {
 import { motion } from "framer-motion";
 import { Card, CardContent } from "@/components/ui/card";
 import Image from "next/image";
+import { Badge } from "@/components/ui/badge";
+import { Button } from "@/components/ui/button";
+import { Heart } from "lucide-react";
+import Pagination from "../components/Pagination";
+import NoData from "../components/NoData";
+import { useRouter } from "next/navigation";
 
 const page = () => {
   const [currentPage, setCurrentPage] = useState(1);
@@ -31,6 +37,7 @@ const page = () => {
   const [sortOption, setSortOption] = useState("newest");
   const bookPerPage = 6;
   const [IsLoading, setIsLoading] = useState(false);
+  const router = useRouter();
 
   const toggleFilter = (section: string, item: string) => {
     const updateFilter = (prev: string[]) => {
@@ -218,16 +225,76 @@ const page = () => {
                                 height={300}
                                 className="h-[250px] w-full object-cover transition-transform duration-300 group-hover:scale-105"
                               />
+                              <div className="absolute left-0 top-0 z-10 flex flex-col gap-2 p-2">
+                                {calculateDiscount(
+                                  book.price,
+                                  book.finalPrice
+                                ) > 0 && (
+                                  <Badge className="bg-orange-600/90 text-white hover:bg-orange-700">
+                                    {calculateDiscount(
+                                      book.price,
+                                      book.finalPrice
+                                    )}{" "}
+                                    % Off
+                                  </Badge>
+                                )}
+                              </div>
+                              <Button
+                                size="icon"
+                                variant="ghost"
+                                className="absolute right-2 top-2 h-8 w-8 rounded-full bg-white/80 backdrop:blur-sm transition-opacity duration-300 hover:bg-white group-hover:opacity-100"
+                              >
+                                <Heart className="h-4 w-4 text-red-500"></Heart>
+                              </Button>
+                            </div>
+                            <div className="p-4 space-y-2">
+                              <div className="flex items-start justify-between">
+                                <h3 className="text-lg font-semibold text-orange-500 line-clamp-2">
+                                  {book.title}
+                                </h3>
+                              </div>
+                              <p className="text-sm text-zinc-400">
+                                {book.author}
+                              </p>
+
+                              <div className="flex items-baseline gap-2">
+                                <span className="text-2xl font-bold text-black">
+                                  {" "}
+                                  ${book.finalPrice}
+                                </span>
+                                {book.price && (
+                                  <span className="text-sm text-zinc-500 line-through">
+                                    {book.price}
+                                  </span>
+                                )}
+                              </div>
+                              <div className="flex justify-between items-center text-xs text-zinc-400">
+                                <span>{formatDate(book.createdAt)}</span>
+                                <span>{book.condition}</span>
+                              </div>
                             </div>
                           </Link>
                         </CardContent>
+                        <div className="absolute -right-8 -top-8 h-24 w-24 rounded-full bg-orange-500/10 blur-2xl" />
+                        <div className="absolute -bottom-8 -left-8 h-24 w-24 rounded-full bg-orange-500/10 blur-2xl" />
                       </Card>
                     </motion.div>
                   ))}
                 </div>
+                <Pagination
+                  currentPage={currentPage}
+                  totalPages={totalPages}
+                  onPageChange={handlePageChange}
+                />
               </>
             ) : (
-              <></>
+              <NoData
+                imageUrl="/images/no-book.jpg"
+                message="No books available please try later."
+                description="Try adjusting your filters or search criteria to find what you're looking for."
+                onClick={() => router.push("/book-sell")}
+                buttonText="Shell Your First Book"
+              />
             )}
           </div>
         </div>

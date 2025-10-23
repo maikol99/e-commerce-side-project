@@ -195,7 +195,7 @@ export default function Home() {
         size="lg"
         className="flex mt-10 mb-10 mx-auto bg-yellow-500 px-8 py-6 rounded-xl"
       >
-        <Link href="/Books">
+        <Link href="/books">
           <div className="text-sm">Explore All Books</div>
         </Link>
       </Button>
