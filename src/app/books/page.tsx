@@ -36,7 +36,7 @@ const page = () => {
   const [selectedType, setSelectedType] = useState<string[]>([]);
   const [sortOption, setSortOption] = useState("newest");
   const bookPerPage = 6;
-  const [IsLoading, setIsLoading] = useState(false);
+  const [isLoading, setIsLoading] = useState(false);
   const router = useRouter();
 
   const toggleFilter = (section: string, item: string) => {
@@ -150,7 +150,7 @@ const page = () => {
                     {key.charAt(0).toUpperCase() + key.slice(1)}
                   </AccordionTrigger>
                   <AccordionContent>
-                    <div className="mt-2 spcae-y-2">
+                    <div className="mt-2 space-y-2">
                       {values.map((value) => (
                         <div
                           key={value}
@@ -169,7 +169,7 @@ const page = () => {
                           />
                           <label
                             htmlFor={value}
-                            className="text-sm font-medium loading-none"
+                            className="text-sm font-medium leading-none"
                           >
                             {value}
                           </label>
@@ -182,7 +182,7 @@ const page = () => {
             </Accordion>
           </div>
           <div className="space-y-6">
-            {IsLoading ? (
+            {isLoading ? (
               <BookLoader />
             ) : paginatedBooks.length ? (
               <>
@@ -197,10 +197,8 @@ const page = () => {
                     <SelectContent>
                       <SelectItem value="newest">Newest First</SelectItem>
                       <SelectItem value="oldest">Oldest First</SelectItem>
-                      <SelectItem value="price-low">Lo to High</SelectItem>
-                      <SelectItem value="high-low">
-                        High To Low First
-                      </SelectItem>
+                      <SelectItem value="price-low">Price: Low to High</SelectItem>
+                      <SelectItem value="price-high">Price: High To Low</SelectItem> 
                     </SelectContent>
                   </Select>
                 </div>
@@ -242,7 +240,7 @@ const page = () => {
                               <Button
                                 size="icon"
                                 variant="ghost"
-                                className="absolute right-2 top-2 h-8 w-8 rounded-full bg-white/80 backdrop:blur-sm transition-opacity duration-300 hover:bg-white group-hover:opacity-100"
+                                className="absolute right-2 top-2 h-8 w-8 rounded-full bg-white/80 backdrop-blur-sm transition-opacity duration-300 hover:bg-white group-hover:opacity-100"
                               >
                                 <Heart className="h-4 w-4 text-red-500"></Heart>
                               </Button>
@@ -293,7 +291,7 @@ const page = () => {
                 message="No books available please try later."
                 description="Try adjusting your filters or search criteria to find what you're looking for."
                 onClick={() => router.push("/book-sell")}
-                buttonText="Shell Your First Book"
+                buttonText="Sell Your First Book"
               />
             )}
           </div>
