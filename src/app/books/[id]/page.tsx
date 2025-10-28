@@ -4,6 +4,10 @@ import { useParams, useRouter } from "next/navigation";
 import { formatDistanceToNow } from "date-fns";
 import Image from "next/image";
 import Link from "next/link";
+import { Button } from "@/components/ui/button";
+import { Heart, Loader2, ShoppingCart } from "lucide-react";
+import { Badge } from "@/components/ui/badge";
+import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 
 const page = () => {
   const params = useParams();
@@ -41,7 +45,7 @@ const page = () => {
 
   const handleAddToCart = {};
 
-  const handleAddToWishList = {};
+  const handleAddToWishList = (productId: string) => {};
 
   const bookImage = book?.images || [];
 
@@ -75,7 +79,7 @@ const page = () => {
           <span>/</span>
           <span className="text-gray-600">{book.title}</span>
         </nav>
-        <div className="grid gap-8 md_grid-cols-2">
+        <div className="grid gap-8 md:grid-cols-2">
           <div className="space-y-4">
             <div className="relative h-[480px] overflow-hidden rounded-lg border bg-white shadow-md">
               <Image
@@ -97,7 +101,7 @@ const page = () => {
                   onClick={() => setSelectedImage(index)}
                   className={`relative h-16 w-16 flex-shrink-0 overflow-hidden rounded-lg border transition-all duration-200 ${
                     selectedImage === index
-                      ? "ring -2 ring-primary scale-105"
+                      ? "ring-2 ring-primary scale-105"
                       : "hover:scale-105"
                   }`}
                 >
@@ -110,6 +114,110 @@ const page = () => {
                 </button>
               ))}
             </div>
+          </div>
+
+          {/* books details*/}
+          <div className="space-y-6">
+            <div className="flex items-center justify-between">
+              <div className="space-y-2">
+                <h1 className="text-2xl font-bold">{book.title}</h1>
+                <p className="text-sm text-muted-foreground">
+                  Posted {formatDate(book.createdAt)}
+                </p>
+              </div>
+              <div className="flex gap-2">
+                <Button variant="outline">Share</Button>
+                <Button
+                  variant="outline"
+                  size="sm"
+                  onClick={() => handleAddToWishList(book._id)}
+                >
+                  <Heart className="h-4 w-4 mr-1 fill-red-500" />
+                  <span className="hidden md:inline">Add</span>
+                </Button>
+              </div>
+            </div>
+
+            <div className="space-y-4">
+              <div>
+                <div className="flex items-baseline gap-2">
+                  <span className="text-lg font-bold">${book.finalPrice}</span>
+                  {book.price && (
+                    <span className="text-lg text-muted-foreground line-through">
+                      ${book.price}
+                    </span>
+                  )}
+                  <Badge variant="secondary" className="text-green-600">
+                    Shipping available
+                  </Badge>
+                </div>
+                <Button className="w-60 py-6 bg-blue-700">
+                  {isAddToCart ? (
+                    <>
+                      <Loader2 className="animate-spin mr-2" size={20} />
+                      Adding to Cart...
+                    </>
+                  ) : (
+                    <>
+                      <ShoppingCart className="mr-2 h-5 w-5" />
+                      Buy Now
+                    </>
+                  )}
+                </Button>
+
+                <Card className="border border-gray-700 shadow-sm ">
+                  <CardHeader>
+                    <CardTitle className="text-lg">Book Details</CardTitle>
+                  </CardHeader>
+                  <CardContent className="grid gap-4">
+                    <div className="grid grid-cols-2 gap-4 text-sm">
+                      <div className="font-medium text-muted-foreground">
+                        Subject/Title
+                      </div>
+                      <div>{book.subject}</div>
+                      <div className="font-medium text-muted-foreground">
+                        Course
+                      </div>
+                      <div>{book.classType}</div>
+                      <div className="font-medium text-muted-foreground">
+                        Category
+                      </div>
+                      <div>{book.category}</div>
+                      <div className="font-medium text-muted-foreground">
+                        Author
+                      </div>
+                      <div>{book.author}</div>
+                      <div className="font-medium text-muted-foreground">
+                        Edition
+                      </div>
+                      <div>{book.edition}</div>
+                      <div className="font-medium text-muted-foreground">
+                        Condition
+                      </div>
+                      <div>{book.condition}</div>
+                    </div>
+                  </CardContent>
+                </Card>
+              </div>
+            </div>
+          </div>
+
+          <div className="mt-8 grid gap-8 md:grid-cols-2">
+            <Card className="border-none shadow-md">
+              <CardHeader>
+                <CardTitle>Description</CardTitle>
+              </CardHeader>
+              <CardContent className="space-y-4">
+                <p>{book.description}</p>
+                <div className="border-t pt-4">
+                  <h3 className="font-medium mb-2"> Our Community</h3>
+                  <p className="text-muted-foreground">
+                    We're not just another shopping website where you buy from
+                    professional sellers
+                  </p>
+                </div>
+              </CardContent>
+            </Card>
           </div>
         </div>
       </div>
