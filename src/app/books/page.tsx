@@ -207,7 +207,7 @@ const page = () => {
                   {paginatedBooks.map((book) => (
                     <motion.div
                       key={book._id}
-                      initial={{ opacity: 0 }}
+                      initial={{ opacity: 0, y: 10}}
                       animate={{ opacity: 1, y: 0 }}
                       exit={{ opacity: 0, y: -10 }}
                       transition={{ duration: 0.3 }}

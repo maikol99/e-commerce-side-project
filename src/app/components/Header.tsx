@@ -24,7 +24,7 @@ import {
   DropdownMenu,
   DropdownMenuContent,
   DropdownMenuTrigger,
-} from "@radix-ui/react-dropdown-menu";
+} from "@/components/ui/dropdown-menu";
 import { useRouter } from "next/navigation";
 import { useDispatch, useSelector } from "react-redux";
 import { RootState } from "@/store/store";
@@ -37,6 +37,7 @@ import {
   SheetTitle,
   SheetTrigger,
 } from "@/components/ui/sheet";
+import AuthPage from "./AuthPage";
 
 const Header = () => {
   const [isDropdownOpen, setIsDropdownOpen] = useState(false);
@@ -47,8 +48,8 @@ const Header = () => {
   );
   const user = {
     profilePicture: "",
-    name: "Maikol Alegre",
-    email: "Alegremaikol8@gmail.com",
+    name: "",
+    email: "",
   };
 
   const userPlaceholder = "";
@@ -99,6 +100,12 @@ const Header = () => {
             onClick: handleLoginClick,
           },
         ]),
+
+        {
+            icon: <Lock className="h-5 w-5" />,
+            label: "Login/sign Up",
+            onClick: handleLoginClick,
+          },
     {
       icon: <User className="h-5 w-5" />,
       label: "My profile",
@@ -144,13 +151,15 @@ const Header = () => {
       label: "Help",
       href: "/how-it-work",
     },
-    ...(user && [
-      {
-        icon: <LogOut className="h-5 w-5" />,
-        label: "Logout",
-        onClick: () => handleLogout,
-      },
-    ]),
+    ...(user
+      ? [
+          {
+            icon: <LogOut className="h-5 w-5" />,
+            label: "Logout",
+            onClick: handleLogout, // ✅ Corregido también esto
+          },
+        ]
+      : []),
   ];
 
   const MenuItems = ({ className = "" }) => (
@@ -258,7 +267,6 @@ const Header = () => {
       </div>
 
       {/*Mobile Header*/}
-
       <div className="container mx-auto flex lg:hidden items-center justify-between p-4">
         <Sheet>
           <SheetTrigger asChild>
@@ -322,6 +330,7 @@ const Header = () => {
           </div>
         </Link>
       </div>
+      <AuthPage isLoginOpen={isLoginOpen} setIsLoginOpen={handleLoginClick} />
     </header>
   );
 };
