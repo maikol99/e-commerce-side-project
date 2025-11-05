@@ -10,7 +10,7 @@ export interface IUSER extends Document {
     profilePicture?: string;
     phoneNumber?: string;
     isVerified: boolean;
-    verificationToken: string;
+    verificationToken?: string;
     resetPasswordToken?: string;
     resetPasswordExpires?: Date;
     agreeTerms:boolean;

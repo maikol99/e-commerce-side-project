@@ -24,7 +24,7 @@ transporter.verify((error,success) =>{
 
 const sendEmail = async (to:string, subject:string,body:string) =>{
     await transporter.sendMail({
-        from:`"your BookKart" <${process.env.EMAIL_USER}>`,
+        from:`"your BookKart" < ${process.env.EMAIL_USER}>`,
         to,
         subject,
         html:body
