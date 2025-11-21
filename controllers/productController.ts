@@ -15,21 +15,22 @@ export const createProduct = async (req: Request, res: Response) => {
             return response(res, 400, 'image is required');
         }
 
-        let parsedPaymentDetails = JSON.parse(paymentDetails);
+        // let parsedPaymentDetails = JSON.parse(paymentDetails);
 
-        if (paymentMode === 'UPI' && (!parsedPaymentDetails || !parsedPaymentDetails.upiId)) {
-            return response(res, 400, 'UPI ID is required for payment');
-        }
+        // if (paymentMode === 'UPI' && (!parsedPaymentDetails || !parsedPaymentDetails.upiId)) {
+        //     return response(res, 400, 'UPI ID is required for payment');
+        // }
 
-        if (paymentMode === 'Bank Account' &&
-            (!parsedPaymentDetails || !parsedPaymentDetails.bankDetails ||
-                !parsedPaymentDetails.bankDetails.accountNumber ||
-                !parsedPaymentDetails.bankDetails.ifscCode ||
-                !parsedPaymentDetails.bankDetails.bankName
-            )
-        ) {
-            return response(res, 400, 'Bank Account details is required for payment');
-        }
+        // if (paymentMode === 'Bank Account' &&
+        //     (!parsedPaymentDetails || !parsedPaymentDetails.bankDetails ||
+        //         !parsedPaymentDetails.bankDetails.accountNumber ||
+        //         !parsedPaymentDetails.bankDetails.ifscCode ||
+        //         !parsedPaymentDetails.bankDetails.bankName
+        //     )
+        // ) {
+        //     return response(res, 400, 'Bank Account details is required for payment');
+        // }
+        
 
         const uploadPromise = images.map(file => uploadToCloudinary(file as any))
         const uploadImages = await Promise.all(uploadPromise)
@@ -41,7 +42,7 @@ export const createProduct = async (req: Request, res: Response) => {
             subject,
             category, condition, classType, price, finalPrice, shippingCharge,
             paymentMode,
-            paymentDetails: parsedPaymentDetails,
+            // paymentDetails: parsedPaymentDetails,
             author,
             edition,
             seller: sellerId,

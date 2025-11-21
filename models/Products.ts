@@ -52,7 +52,7 @@ const productSchema = new Schema<IProduct>(
         bankName: { type: String },
       },
     },
-    seller: { Type: Schema.Types.ObjectId, ref: "User", required: true },
+    seller: { type: Schema.Types.ObjectId, ref: "User", required: true },
   },
   { timestamps: true }
 );
