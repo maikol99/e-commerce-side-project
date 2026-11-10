@@ -46,10 +46,12 @@ connectDb();
 // API endpoints
 app.use("/api/auth", authRoutes);
 app.use("/api/product", productRoutes);
+app.use("/api/products", productRoutes);
 app.use("/api/cart", cartRoutes);
 app.use("/api/wishlist", wishListRoutes);
 app.use("/api/user/address", addressRoutes);
 app.use("/api/user", userRoutes);
+app.use("/api/users", userRoutes);
 
 app.listen(PORT, () => {
   console.log(`🚀 Server listening on port ${PORT}`);
