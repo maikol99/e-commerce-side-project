@@ -1,6 +1,7 @@
 import express from "express";
 import dotenv from "dotenv";
 import cors from "cors";
+import path from "path";
 import bodyParser from "body-parser";
 import cookieParser from "cookie-parser"; 
 import passport from "passport";
@@ -37,6 +38,7 @@ app.use(express.json());
 app.use(bodyParser.json()); 
 app.use(cookieParser()); 
 app.use(passport.initialize());
+app.use("/uploads", express.static(path.join(__dirname, "uploads")));
 
 // Conectar a la base de datos
 connectDb();
