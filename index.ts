@@ -21,8 +21,14 @@ const PORT = process.env.PORT || 8080;
 
 const app = express();
 
+const allowedOrigins = [
+  process.env.FRONTEND_URL,
+  "http://localhost:3000",
+  "http://localhost:3001",
+].filter(Boolean) as string[];
+
 const corsOption = {
-  origin: process.env.FRONTEND_URL || "http://localhost:3001",
+  origin: allowedOrigins,
   credentials: true, 
 };
 
