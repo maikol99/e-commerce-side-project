@@ -3,6 +3,7 @@ import dotenv from "dotenv";
 import cors from "cors";
 import bodyParser from "body-parser";
 import cookieParser from "cookie-parser"; 
+import passport from "passport";
 import connectDb from "./config/dbConnect";
 import authRoutes from "./routes/authRouter";
 import productRoutes from "./routes/productRoute";
@@ -11,15 +12,17 @@ import wishListRoutes from './routes/wishlistRouter'
 import addressRoutes from "./routes/addressRoute";
 import userRoutes from "./routes/userRoute";
 
+// Importar la estrategia de Google para que se registre en passport
+import "./controllers/strategy/googleStrategy";
+
 dotenv.config();
 
 const PORT = process.env.PORT || 8080;
 
 const app = express();
 
-
 const corsOption = {
-  origin: process.env.FRONTEND_URL,
+  origin: process.env.FRONTEND_URL || "http://localhost:3001",
   credentials: true, 
 };
 
@@ -27,6 +30,7 @@ app.use(cors(corsOption));
 app.use(express.json());
 app.use(bodyParser.json()); 
 app.use(cookieParser()); 
+app.use(passport.initialize());
 
 // Conectar a la base de datos
 connectDb();
@@ -38,8 +42,6 @@ app.use("/api/cart", cartRoutes);
 app.use("/api/wishlist", wishListRoutes);
 app.use("/api/user/address", addressRoutes);
 app.use("/api/user", userRoutes);
-
-
 
 app.listen(PORT, () => {
   console.log(`🚀 Server listening on port ${PORT}`);

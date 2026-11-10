@@ -14,50 +14,55 @@ export const register = async (req: Request, res: Response) => {
 
     // Validaciones básicas
     if (!name || !email || !password) {
-      return res
-        .status(400)
-        .json({ message: "Todos los campos son obligatorios." });
+      return response(res, 400, "Todos los campos son obligatorios.");
     }
 
     // Verificar si el usuario ya existe
     const existingUser = await User.findOne({ email });
     if (existingUser) {
-      return response(res, 400, "User already exists");
+      return response(res, 400, "Ya existe una cuenta con este correo electrónico.");
     }
 
     const verificationToken = crypto.randomBytes(20).toString("hex");
+    
+    // Si no hay credenciales de email reales (ej. demo), auto-verificamos para facilitar pruebas
+    const isEmailServiceReady = process.env.EMAIL_PASS && process.env.EMAIL_PASS !== "demo";
+
     const user = new User({
       name,
       email,
       password,
       agreeTerms,
       verificationToken,
+      isVerified: !isEmailServiceReady, // auto-verificado si no hay email real
     });
     await user.save();
 
-    // ✅ BIEN - Envuelve en try-catch para capturar errores
-    try {
-      await sendVerificationToEmail(user.email, verificationToken);
-      console.log('✅ Email de verificación enviado a:', user.email);
-    } catch (emailError) {
-      console.error('❌ Error al enviar email:', emailError);
-      // Importante: El usuario ya fue creado, así que no falles la operación
-      return response(
-        res,
-        201,
-        "User registered but email could not be sent. Please contact support.",
-        { user: { email: user.email } }
-      );
+    if (isEmailServiceReady) {
+      try {
+        await sendVerificationToEmail(user.email, verificationToken);
+        console.log('✅ Email de verificación enviado a:', user.email);
+      } catch (emailError) {
+        console.error('❌ Error al enviar email:', emailError);
+        // Si falló el envío de correo, auto-verificamos al usuario para no dejarlo bloqueado
+        user.isVerified = true;
+        await user.save();
+      }
+    } else {
+      console.log(`ℹ️ [DEV] Usuario ${user.email} auto-verificado (servicio de email no configurado)`);
+      console.log(`🔗 Token de verificación: ${verificationToken}`);
     }
 
     return response(
       res,
-      201, // ← Cambié de 200 a 201 (Created)
-      "User registration successful, please check your email to verify your account"
+      201,
+      user.isVerified
+        ? "Cuenta creada exitosamente. Ya podés iniciar sesión."
+        : "Registro exitoso. Te enviamos un email de verificación a tu casilla."
     );
   } catch (error) {
     console.error('❌ Error en registro:', error);
-    return response(res, 500, "Internal Server Error, please try again");
+    return response(res, 500, "Error interno del servidor, por favor intentá nuevamente.");
   }
 };
 
@@ -94,33 +99,52 @@ export const verifyEmail = async (req: Request, res: Response) => {
 export const login = async (req: Request, res: Response) => {
   try {
     const { email, password } = req.body;
+    if (!email || !password) {
+      return response(res, 400, "Debés ingresar email y contraseña.");
+    }
+
     const user = await User.findOne({ email });
     if (!user || !(await user.comparePassword(password))) {
-      return response(res, 400, "invalid email or password");
+      return response(res, 400, "Email o contraseña incorrectos.");
     }
 
     if (!user.isVerified) {
-      return response(
-        res,
-        400,
-        "please verify your email before login in.Check your email inbox to verify"
-      );
+      // Si el email service no está configurado, lo auto-verificamos para no bloquear el dev
+      const isEmailServiceReady = process.env.EMAIL_PASS && process.env.EMAIL_PASS !== "demo";
+      if (!isEmailServiceReady) {
+        user.isVerified = true;
+        await user.save();
+      } else {
+        return response(
+          res,
+          400,
+          "Por favor verificá tu correo antes de iniciar sesión. Revisá tu casilla de spam o recibidos."
+        );
+      }
     }
-    
 
     const accessToken = generateToken(user);
     res.cookie("access", accessToken, {
       httpOnly: true,
       maxAge: 24 * 60 * 60 * 1000,
+      sameSite: "lax",
     });
 
-    return response(res, 200, "User logged in sucesfully", {
-      user: { name: user.name, email: user.email },
-      token: accessToken
+    const userData = {
+      _id: user._id,
+      name: user.name,
+      email: user.email,
+      profilePicture: user.profilePicture,
+    };
+
+    return response(res, 200, "Inicio de sesión exitoso.", {
+      ...userData,
+      user: userData,
+      token: accessToken,
     });
   } catch (error) {
-    console.log(error);
-    return response(res, 500, "Internal Server Error, please try again");
+    console.error("❌ Error en login:", error);
+    return response(res, 500, "Error interno del servidor, por favor intentá nuevamente.");
   }
 };
 

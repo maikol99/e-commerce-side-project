@@ -22,34 +22,46 @@ router.get('/logout', authContoller.logout)
 
 router.get('/verify-auth', authenticatedUser, authContoller.checkUserAuth)
 
-router.get('/auth/google',passport.authenticate('google', {
-    scope: ["profile", "email"]
-}))
+router.get('/google', (req: Request, res: Response, next: NextFunction) => {
+    if (!process.env.GOOGLE_CLIENT_ID || !process.env.GOOGLE_CLIENT_SECRET) {
+        return res.status(503).json({
+            success: false,
+            message: "Google OAuth no está configurado en el servidor. Agregá GOOGLE_CLIENT_ID y GOOGLE_CLIENT_SECRET en el archivo .env del backend.",
+        });
+    }
+    passport.authenticate('google', {
+        scope: ["profile", "email"]
+    })(req, res, next);
+});
 
-//google Callback route
-
+// google Callback route
 router.get(
-    '/auth/google/callback',
-    passport.authenticate("google", {
-      failureRedirect: `${process.env.FRONTEND_URL}`,
-      session: false, // si NO usás sesiones
-    }),
-
-    async(req:Request, res:Response, next:NextFunction) :  Promise<void> => {
+    '/google/callback',
+    (req: Request, res: Response, next: NextFunction) => {
+        if (!process.env.GOOGLE_CLIENT_ID || !process.env.GOOGLE_CLIENT_SECRET) {
+            return res.redirect(`${process.env.FRONTEND_URL}?error=google_not_configured`);
+        }
+        passport.authenticate("google", {
+            failureRedirect: `${process.env.FRONTEND_URL}?error=google_failed`,
+            session: false,
+        })(req, res, next);
+    },
+    async (req: Request, res: Response, next: NextFunction): Promise<void> => {
         try {
             const user = req.user as IUSER;
-            const accessToken = await generateToken(user)
-            res.cookie('access_token', accessToken, {
-                httpOnly:true,
-                maxAge: 24 * 60 * 60 * 1000
-            })
+            const accessToken = generateToken(user);
+            res.cookie('access', accessToken, {
+                httpOnly: true,
+                maxAge: 24 * 60 * 60 * 1000,
+                sameSite: 'lax',
+            });
 
-            res.redirect(`${process.env.FRONTEND_URL}`)
+            res.redirect(`${process.env.FRONTEND_URL}`);
         } catch (error) {
-            next(error)
+            next(error);
         }
-    } 
-)
+    }
+);
 
 
 export default router;
