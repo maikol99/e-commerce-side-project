@@ -12,6 +12,7 @@ import cartRoutes from "./routes/cartRoute";
 import wishListRoutes from './routes/wishlistRouter'
 import addressRoutes from "./routes/addressRoute";
 import userRoutes from "./routes/userRoute";
+import orderRoutes from "./routes/orderRouter";
 
 // Importar la estrategia de Google para que se registre en passport
 import "./controllers/strategy/googleStrategy";
@@ -49,6 +50,8 @@ app.use("/api/product", productRoutes);
 app.use("/api/products", productRoutes);
 app.use("/api/cart", cartRoutes);
 app.use("/api/wishlist", wishListRoutes);
+app.use("/api/order", orderRoutes);
+app.use("/api/orders", orderRoutes);
 app.use("/api/user/address", addressRoutes);
 app.use("/api/user", userRoutes);
 app.use("/api/users", userRoutes);
