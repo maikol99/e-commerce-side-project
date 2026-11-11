@@ -9,8 +9,9 @@ const router = express.Router()
 router.get('/', ProductController.getAllProducts)
 router.get('/:id', ProductController.getProductById)
 
-// Rutas protegidas (crear, eliminar, ver mis ventas)
+// Rutas protegidas (crear, editar, eliminar, ver mis ventas)
 router.post('/', authenticatedUser, multerMiddleware, ProductController.createProduct)
+router.put('/:id', authenticatedUser, multerMiddleware, ProductController.updateProduct)
 router.delete('/seller/:productId', authenticatedUser, ProductController.deleteProduct)
 router.get('/seller/:sellerId', authenticatedUser, ProductController.getProductBySellerId)
 

@@ -112,6 +112,62 @@ export const deleteProduct = async (req: Request, res: Response) => {
     }
 }
 
+export const updateProduct = async (req: Request, res: Response) => {
+    try {
+        const { id } = req.params;
+        const sellerId = req.id;
+
+        const product = await Products.findById(id);
+        if (!product) {
+            return response(res, 404, "Libro no encontrado");
+        }
+
+        if (product.seller.toString() !== sellerId) {
+            return response(res, 403, "No tenés permisos para editar este libro");
+        }
+
+        const {
+            title,
+            category,
+            condition,
+            classType,
+            subject,
+            price,
+            author,
+            edition,
+            description,
+            finalPrice,
+            shippingCharge,
+        } = req.body;
+
+        if (title !== undefined) product.title = title.trim();
+        if (category !== undefined) product.category = category;
+        if (condition !== undefined) product.condition = condition;
+        if (classType !== undefined) product.classType = classType;
+        if (subject !== undefined) product.subject = subject.trim();
+        if (price !== undefined) product.price = Number(price);
+        if (author !== undefined) product.author = author.trim();
+        if (edition !== undefined) product.edition = edition.trim();
+        if (description !== undefined) product.description = description.trim();
+        if (finalPrice !== undefined) product.finalPrice = Number(finalPrice);
+        if (shippingCharge !== undefined) product.shippingCharge = String(shippingCharge);
+
+        const newImages = req.files as Express.Multer.File[];
+        if (newImages && newImages.length > 0) {
+            const uploadPromise = newImages.map((file) => uploadToCloudinary(file as any));
+            const uploadImages = await Promise.all(uploadPromise);
+            const imageUrls = uploadImages.map((img) => img.secure_url);
+            product.images = imageUrls;
+        }
+
+        await product.save();
+        return response(res, 200, "Libro actualizado con éxito", product);
+    } catch (error) {
+        console.error("Error updating product:", error);
+        return response(res, 500, "Error interno al actualizar el libro");
+    }
+};
+
 
 
 export const getProductBySellerId  = async (req:Request, res:Response) => {
